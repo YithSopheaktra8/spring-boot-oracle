@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: blog-api
+#  database configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://ep-odd-darkness-a1w1ruse-pooler.ap-southeast-1.aws.neon.tech:5432/blog-api?sslmode=require
+    username: blog-api_owner
+    password: npg_WP3u1FIJcHtT
+#   jpa configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: true
+
