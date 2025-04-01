@@ -43,7 +43,7 @@ public class SecurityConfig {
                 authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/v1/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
         );
 
         http

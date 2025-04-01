@@ -8,10 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -20,8 +17,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public UserResponse findByUsername(@RequestParam("username") String username) {
+    @GetMapping("/{username}")
+    public UserResponse findByUsername(@PathVariable String username) {
         return userService.findByUsername(username);
     }
 
