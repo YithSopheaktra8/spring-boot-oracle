@@ -3,13 +3,10 @@ package com.yithsopheakktra.co.springblogapi.domain;
 import com.yithsopheakktra.co.springblogapi.audit.Auditable;
 import com.yithsopheakktra.co.springblogapi.utils.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 
 @Entity

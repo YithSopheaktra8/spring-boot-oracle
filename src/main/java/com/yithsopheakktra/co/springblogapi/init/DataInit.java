@@ -23,13 +23,22 @@ public class DataInit {
     @PostConstruct
     public void init() {
         if(userRepository.count() < 1){
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("qwerqwer"));
+            admin.setEmail("admin@gmail.com");
+            admin.setRole(Role.ADMIN);
+            admin.setUuid(UUID.randomUUID().toString());
+
             User user = new User();
-            user.setUsername("admin");
+            user.setUsername("user");
             user.setPassword(passwordEncoder.encode("qwerqwer"));
-            user.setEmail("admin@gmail.com");
-            user.setRole(Role.ADMIN);
+            user.setEmail("user@gmail.com");
+            user.setRole(Role.USER);
             user.setUuid(UUID.randomUUID().toString());
+
             userRepository.save(user);
+            userRepository.save(admin);
         }
     }
 

@@ -8,6 +8,7 @@ import com.yithsopheakktra.co.springblogapi.features.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -43,8 +45,14 @@ public class AuthServiceImpl implements AuthService{
         // create JWT token here
         Instant now = Instant.now();
 
+        User user = userRepository.findByUsername(loginRequest.username())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "User not found"
+                ));
+
         JwtClaimsSet accessTokenJwtClaimsSet = JwtClaimsSet.builder()
-                .id(loginRequest.username())
+                .id(user.getUuid())
                 .issuedAt(now)
                 .subject("Access Resource")
                 .claim("scope", authenticate.getAuthorities().stream()
@@ -86,10 +94,13 @@ public class AuthServiceImpl implements AuthService{
             Instant now = Instant.now();
 
             User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "User not found"
+                    ));
 
             JwtClaimsSet accessTokenJwtClaimsSet = JwtClaimsSet.builder()
-                    .id(user.getUsername())
+                    .id(user.getUuid())
                     .issuedAt(now)
                     .subject("Access Resource")
                     .claim("scope", user.getRole()) // Fetch user roles from DB
