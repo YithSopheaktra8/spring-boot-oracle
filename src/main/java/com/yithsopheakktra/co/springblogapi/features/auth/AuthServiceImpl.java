@@ -8,6 +8,8 @@ import com.yithsopheakktra.co.springblogapi.features.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,6 +36,8 @@ public class AuthServiceImpl implements AuthService{
     private final JwtEncoder refreshTokenJwtEncoder;
     private final JwtDecoder refreshTokenJwtDecoder;
     private final UserRepository userRepository;
+    @Qualifier("applicationTaskExecutor")
+    private final AsyncTaskExecutor asyncTaskExecutor;
 
     @Override
     public AuthResponse login(LoginRequest loginRequest) {
@@ -41,6 +45,12 @@ public class AuthServiceImpl implements AuthService{
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
 
         Authentication authenticate = daoAuthenticationProvider.authenticate(usernamePasswordAuthenticationToken);
+
+
+        asyncTaskExecutor.execute(() -> {
+            // Log the authentication event
+            log.info("User {} authenticated successfully", loginRequest.username());
+        });
 
         // create JWT token here
         Instant now = Instant.now();
@@ -58,7 +68,7 @@ public class AuthServiceImpl implements AuthService{
                 .claim("scope", authenticate.getAuthorities().stream()
                         .map(grantedAuthority -> grantedAuthority.getAuthority().replace("ROLE_", "")) // Remove ROLE_
                         .collect(Collectors.joining(" "))) // Store as space-separated string
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .expiresAt(now.plus(2, ChronoUnit.MINUTES))
                 .build();
 
         JwtEncoderParameters accessTokenParameters = JwtEncoderParameters
@@ -67,7 +77,7 @@ public class AuthServiceImpl implements AuthService{
         JwtClaimsSet refreshTokenJwtClaimsSet = JwtClaimsSet.builder()
                 .id(loginRequest.username())
                 .issuedAt(now)
-                .subject("refresh Resource")
+                .subject("Refresh Resource")
                 .expiresAt(now.plus(1, ChronoUnit.DAYS))
                 .build();
 
@@ -95,8 +105,8 @@ public class AuthServiceImpl implements AuthService{
 
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "User not found"
+                            HttpStatus.UNAUTHORIZED,
+                            "FAILED TO REFRESH TOKEN"
                     ));
 
             JwtClaimsSet accessTokenJwtClaimsSet = JwtClaimsSet.builder()

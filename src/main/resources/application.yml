@@ -1,19 +1,21 @@
 spring:
   application:
     name: blog-api
-#  database configuration
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://ep-odd-darkness-a1w1ruse-pooler.ap-southeast-1.aws.neon.tech:5432/blog-api?sslmode=require
-    username: blog-api_owner
-    password: npg_WP3u1FIJcHtT
-#   jpa configuration
+    url: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+    username: HR
+    password: qwerqwer
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      max-lifetime: 2000000
+      connection-timeout: 30000
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-        show_sql: true
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.OracleDialect
+
 
