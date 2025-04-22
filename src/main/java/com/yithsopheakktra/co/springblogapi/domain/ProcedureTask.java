@@ -26,5 +26,5 @@ public class ProcedureTask {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String result; // Could store resultId or summary
-    private String errorMessage;
+
 }

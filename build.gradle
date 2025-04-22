@@ -28,6 +28,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework/spring-websocket
 	implementation("org.springframework:spring-websocket:7.0.0-M4")
 
+	compileOnly 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+
 	compileOnly 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'

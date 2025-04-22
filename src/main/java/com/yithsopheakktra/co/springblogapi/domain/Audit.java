@@ -37,6 +37,8 @@ public class Audit {
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
+    private Boolean isActive;
+
     @ManyToOne
     private User user;
 }
